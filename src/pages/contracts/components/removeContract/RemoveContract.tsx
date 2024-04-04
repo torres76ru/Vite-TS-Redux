@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Button, Modal, ModalBody, ModalHeader } from "reactstrap";
 import { API_URL } from "../../../../App";
+import Cookies from "js-cookie";
 
 interface Props {
   pk: number;
@@ -16,10 +17,16 @@ const RemoveContract = ({ resetState, pk }: Props) => {
   };
 
   const deleteContract = () => {
-    axios.delete(API_URL + "contracts/" + pk).then(() => {
-      resetState();
-      toggle();
-    });
+    axios
+      .delete(API_URL + "contracts/" + pk, {
+        headers: {
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
+      })
+      .then(() => {
+        resetState();
+        toggle();
+      });
     setVisible(!visible);
   };
 

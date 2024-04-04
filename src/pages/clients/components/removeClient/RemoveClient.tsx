@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button, Modal, ModalBody, ModalHeader } from "reactstrap";
+import Cookies from "js-cookie";
 import { API_URL } from "../../../../App";
 
 interface Props {
@@ -15,10 +16,16 @@ const RemoveClient = ({ pk, resetState }: Props) => {
   };
 
   const deleteClient = () => {
-    axios.delete(API_URL + "clients/" + pk).then(() => {
-      resetState();
-      toggle();
-    });
+    axios
+      .delete(API_URL + "clients/" + pk, {
+        headers: {
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
+      })
+      .then(() => {
+        resetState();
+        toggle();
+      });
     setVisible(!visible);
   };
 

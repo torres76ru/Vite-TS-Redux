@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import Cookies from "js-cookie";
 import axios from "axios";
 import { Client } from "../../../../common/InterfaceClient";
 import { API_URL } from "../../../../App";
+import CSRFToken from "../../../../components/CSRFToken/CSRFToken";
 
 interface Props {
   client?: Client;
@@ -54,7 +56,10 @@ const ClientForm = (props: Props) => {
     e.preventDefault();
     await axios
       .put(API_URL + "clients/" + client.pk, client, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
       })
       .then(() => {
         props.resetState();
@@ -88,7 +93,10 @@ const ClientForm = (props: Props) => {
     };
     await axios
       .post(API_URL + "clients/", data, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
       })
       .then(() => {
         props.resetState();
@@ -102,6 +110,7 @@ const ClientForm = (props: Props) => {
 
   return (
     <Form onSubmit={props.client ? submitDataEdit : submitDataAdd}>
+      <CSRFToken />
       <FormGroup>
         <Label for="fio">ФИО</Label>
         <Input

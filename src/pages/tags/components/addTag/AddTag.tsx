@@ -11,6 +11,8 @@ import {
 } from "reactstrap";
 import { API_URL } from "../../../../App";
 import axios from "axios";
+import Cookies from "js-cookie";
+import CSRFToken from "../../../../components/CSRFToken/CSRFToken";
 
 interface Props {
   resetState: () => void;
@@ -35,7 +37,10 @@ const AddTag = ({ resetState }: Props) => {
     console.log(data);
     await axios
       .post(API_URL + "tags/", data, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
       })
       .then(() => {
         resetState();
@@ -64,6 +69,7 @@ const AddTag = ({ resetState }: Props) => {
         <ModalBody>
           <Form onSubmit={submitData}>
             <FormGroup>
+              <CSRFToken />
               <Label for="tagName">Название</Label>
               <Input
                 type="text"

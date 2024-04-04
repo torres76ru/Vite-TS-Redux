@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Fragment, useState, ChangeEvent } from "react";
 import {
   Button,
@@ -11,7 +10,6 @@ import {
 } from "reactstrap";
 import { Client } from "../../common/InterfaceClient";
 import { InterfaceContract } from "../../common/InterfaceContract";
-import { API_URL } from "../../App";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -26,21 +24,6 @@ const ModalFormContract = ({ client, contracts }: Props) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedDoc(parseInt(e.target.value, 10));
     console.log(selectedDoc);
-  };
-
-  const getcontracts = () => {
-    axios
-      .get<Blob>(API_URL + "contracts/" + client.pk + "/" + selectedDoc + "/", {
-        responseType: "blob"
-      })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "contracts.docx");
-        document.body.appendChild(link);
-        link.click();
-      });
   };
 
   const toggle = () => {

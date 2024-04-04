@@ -25,7 +25,7 @@ const TableCustom = ({ rows, setRows }: Props) => {
     };
 
   const handleDeleteRow = (rowIndex: number) => {
-    const newRows = rows.filter((row, index) => index !== rowIndex);
+    const newRows = rows.filter((_, index) => index !== rowIndex);
     setRows(newRows);
   };
 

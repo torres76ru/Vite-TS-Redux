@@ -2,30 +2,41 @@ import React from "react";
 import { Button, Input, Table } from "reactstrap";
 
 interface Props {
-  rows: string[][];
-  setRows: React.Dispatch<React.SetStateAction<string[][]>>;
+  rows: tableMultimedia[];
+  setRows: React.Dispatch<React.SetStateAction<tableMultimedia[]>>;
+}
+
+export interface tableMultimedia {
+  image: File;
+  col2: string;
+  col3: string;
 }
 
 const TableCustom2 = ({ rows, setRows }: Props) => {
   const handleAddRow = () => {
-    setRows([...rows, ["", "", "", ""]]);
+    setRows([...rows, { image: new File([], ""), col2: "", col3: "" }]);
   };
 
   const handleEditCell =
-    (rowIndex: number, cellIndex: number) =>
+    (rowIndex: number, fieldName: keyof tableMultimedia) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.name === "file") console.log(event.target.files);
       const newRows = rows.map((row, index) =>
         index === rowIndex
-          ? row.map((cell, idx) =>
-              idx === cellIndex ? event.target.value : cell
-            )
+          ? {
+              ...row,
+              [fieldName]:
+                event.target.name === "file"
+                  ? event.target.files![0]
+                  : event.target.value
+            }
           : row
       );
       setRows(newRows);
     };
 
   const handleDeleteRow = (rowIndex: number) => {
-    const newRows = rows.filter((row, index) => index !== rowIndex);
+    const newRows = rows.filter((_, index) => index !== rowIndex);
     setRows(newRows);
   };
 
@@ -37,7 +48,7 @@ const TableCustom2 = ({ rows, setRows }: Props) => {
             <tr>
               <th>№</th>
               <th>Описание дизайна макета и/или фотографии</th>
-              <th colSpan={2}>Обладатель исключительных прав (ФИО)</th>
+              <th>Обладатель исключительных прав (ФИО)</th>
               <th>Год обнародования</th>
               <th></th>
             </tr>
@@ -46,26 +57,27 @@ const TableCustom2 = ({ rows, setRows }: Props) => {
             {rows.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 <td>{rowIndex + 1}</td>
-                {row.map((cell, cellIndex) =>
-                  cellIndex === 0 ? (
-                    <td key={cellIndex}>
-                      <Input
-                        id="exampleText"
-                        name="text"
-                        type="textarea"
-                        onChange={handleEditCell(rowIndex, cellIndex)}
-                      />
-                    </td>
-                  ) : (
-                    <td key={cellIndex}>
-                      <Input
-                        type="text"
-                        value={cell}
-                        onChange={handleEditCell(rowIndex, cellIndex)}
-                      />
-                    </td>
-                  )
-                )}
+                <td>
+                  <Input
+                    type="file"
+                    name="file"
+                    onChange={handleEditCell(rowIndex, "image")}
+                  />
+                </td>
+                <td>
+                  <Input
+                    type="text"
+                    value={row.col2}
+                    onChange={handleEditCell(rowIndex, "col2")}
+                  />
+                </td>
+                <td>
+                  <Input
+                    type="text"
+                    value={row.col3}
+                    onChange={handleEditCell(rowIndex, "col3")}
+                  />
+                </td>
                 <td>
                   <Button
                     color="primary"

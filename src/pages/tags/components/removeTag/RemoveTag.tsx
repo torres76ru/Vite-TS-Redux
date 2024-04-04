@@ -2,6 +2,7 @@ import axios from "axios";
 import { Button, Modal, ModalBody, ModalHeader } from "reactstrap";
 import { API_URL } from "../../../../App";
 import { useState } from "react";
+import Cookies from "js-cookie";
 
 interface Props {
   pk: number;
@@ -16,10 +17,16 @@ const RemoveTag = ({ pk, resetState }: Props) => {
   };
 
   const deleteTag = () => {
-    axios.delete(API_URL + "tags/" + pk).then(() => {
-      resetState();
-      toggle();
-    });
+    axios
+      .delete(API_URL + "tags/" + pk, {
+        headers: {
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
+      })
+      .then(() => {
+        resetState();
+        toggle();
+      });
     setVisible(!visible);
   };
 

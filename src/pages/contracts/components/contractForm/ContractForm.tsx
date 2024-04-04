@@ -2,7 +2,9 @@ import { Button, Form, FormGroup, Input, Label } from "reactstrap";
 import { InterfaceContract } from "../../../../common/InterfaceContract";
 import { useRef } from "react";
 import { API_URL } from "../../../../App";
+import Cookies from "js-cookie";
 import axios from "axios";
+import CSRFToken from "../../../../components/CSRFToken/CSRFToken";
 
 interface Props {
   contract?: InterfaceContract;
@@ -29,7 +31,10 @@ const ContractForm = (props: Props) => {
 
     await axios
       .post(API_URL + "contracts/load/", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "X-CSRFToken": Cookies.get("csrftoken")
+        }
       })
       .then(() => {
         props.resetState();
@@ -43,6 +48,7 @@ const ContractForm = (props: Props) => {
 
   return (
     <Form onSubmit={submitDataLoad}>
+      <CSRFToken />
       <FormGroup>
         <Label for="name">Наименование договора</Label>
         <Input type="text" name="fio" id="name" required />
